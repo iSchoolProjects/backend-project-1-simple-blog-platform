@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from '../../entity/category/category.entity';
-import { User } from '../../entity/user/user.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePostDto {

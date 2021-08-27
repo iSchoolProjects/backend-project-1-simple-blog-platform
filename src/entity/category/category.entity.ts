@@ -13,8 +13,8 @@ export class Category {
   title: string;
 
   @ManyToOne(() => Category)
-  parentId: Category;
+  parent: Category;
 
   @ManyToOne(() => User)
-  userId: User;
+  user: User;
 }

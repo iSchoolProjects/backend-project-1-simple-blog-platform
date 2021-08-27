@@ -7,9 +7,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CommonService } from '../common/services/common.service';
 import { CreatePaginationDto } from '../common/dto/create-pagination.dto';
-import { CreateFilterDto } from '../common/dto/create-filter.dto';
 import { User } from '../entity/user/user.entity';
-import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class PostService {
@@ -22,9 +20,7 @@ export class PostService {
   async readPosts(
     pagination: CreatePaginationDto,
     filter,
-    user: User,
   ): Promise<BlogPost[]> {
-    filter.where.user = user.id;
     return await this.postRepository.find({
       ...filter,
       take: pagination.limit,
@@ -73,6 +69,8 @@ export class PostService {
     id: string,
     updatePostDto: UpdatePostDto,
   ): Promise<UpdateResult> {
-    return await this.postRepository.update(id, updatePostDto);
+    let post = new BlogPost(updatePostDto);
+    post = await this.commonService.slugGenerator(post);
+    return await this.postRepository.update(id, post);
   }
 }

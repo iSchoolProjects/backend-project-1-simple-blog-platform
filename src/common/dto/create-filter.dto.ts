@@ -5,6 +5,7 @@ import {
   IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../../entity/user/user.entity';
 
 export class CreateFilterDto {
   @IsOptional()
@@ -12,8 +13,8 @@ export class CreateFilterDto {
   @IsNumberString()
   @ApiProperty({ required: false })
   isDeleted: string;
-  @IsOptional()
   @ApiProperty({ required: false })
+  @IsOptional()
   user: number;
   @IsOptional()
   @IsString()
