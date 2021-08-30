@@ -7,9 +7,10 @@ import { CommonService } from '../common/services/common.service';
 import { PaginationService } from '../common/services/pagination.service';
 import { FilterService } from '../common/services/filter.service';
 import { AuthModule } from '../auth/auth.module';
+import { PostRepository } from '../repository/post/post.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BlogPost]), AuthModule],
+  imports: [TypeOrmModule.forFeature([PostRepository, BlogPost]), AuthModule],
   controllers: [PostController],
   providers: [PostService, CommonService, PaginationService, FilterService],
 })

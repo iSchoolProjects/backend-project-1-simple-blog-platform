@@ -8,8 +8,9 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminPostService } from './admin-post.service';
 import { BlogPost } from '../../entity/post/post.entity';
 import { CreatePaginationDto } from '../../common/dto/create-pagination.dto';
@@ -19,9 +20,12 @@ import { FilterService } from '../../common/services/filter.service';
 import { CreatePostAdminDto } from './dto/create-post-admin.dto';
 import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
 import { UpdateResult } from 'typeorm';
-import { User } from '../../entity/user/user.entity';
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
+import { AdminGuard } from '../../auth/guards/admin.guard';
 
 @ApiTags('Admin')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('admin/posts')
 export class AdminPostController {
   constructor(
@@ -34,11 +38,10 @@ export class AdminPostController {
   async getAllPosts(
     @Query() createPaginationDto: CreatePaginationDto,
     @Query() setFilterDto: CreateFilterDto,
-    @Query() user: User,
   ): Promise<BlogPost[]> {
     const pagination =
       this.paginationService.setPagination(createPaginationDto);
-    const filter = this.filterService.setFilter(setFilterDto, user);
+    const filter = this.filterService.setFilter(setFilterDto);
     return await this.adminPostService.getAllPosts(pagination, filter);
   }
 

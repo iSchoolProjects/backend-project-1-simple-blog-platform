@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import typeOrmConfig from './config/typeormconfig';
 import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
+import { AdminUserModule } from './admin/admin-user/admin-user.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AdminModule } from './admin/admin.module';
     PostModule,
     AuthModule,
     AdminModule,
+    AdminUserModule,
   ],
   controllers: [],
   providers: [],

@@ -39,6 +39,6 @@ export class BlogPost {
   @ManyToOne(() => Category)
   category: Category;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.posts)
   user: User;
 }

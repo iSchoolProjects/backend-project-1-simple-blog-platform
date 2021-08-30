@@ -7,6 +7,7 @@ import { CreatePostAdminDto } from './dto/create-post-admin.dto';
 import { CommonService } from '../../common/services/common.service';
 import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { User } from '../../entity/user/user.entity';
 
 @Injectable()
 export class AdminPostService {
@@ -22,7 +23,7 @@ export class AdminPostService {
     return await this.postRepository.find({
       take: pagination.limit,
       skip: pagination.skip,
-      ...filter,
+      where: { ...filter },
       relations: ['user'],
     });
   }

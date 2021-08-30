@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '../../enum/user-role.enum';
+import { BlogPost } from '../post/post.entity';
 
 @Entity()
 export class User {
@@ -32,6 +33,9 @@ export class User {
 
   @Column({ name: 'email', type: 'varchar', length: '50', unique: true })
   email: string;
+
+  @OneToMany(() => BlogPost, (blogPost) => blogPost.user)
+  posts: BlogPost;
 
   // toJSON() {
   //   delete this.password;

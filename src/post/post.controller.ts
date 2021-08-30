@@ -42,11 +42,12 @@ export class PostController {
     @Query() setFilter: CreateFilterDto,
     @GetUser() user: User,
   ): Promise<BlogPost[]> {
-    const filter = this.filterService.setFilter(setFilter, user);
+    const filter = this.filterService.setFilter(setFilter);
+
     const pagination = this.paginationService.setPagination(createPagination);
 
     try {
-      return await this.postService.readPosts(pagination, filter);
+      return await this.postService.readPosts(pagination, filter, user);
     } catch (e) {
       throw new BadRequestException();
     }

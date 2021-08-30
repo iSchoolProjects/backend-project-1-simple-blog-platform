@@ -5,7 +5,6 @@ import {
   IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '../../entity/user/user.entity';
 
 export class CreateFilterDto {
   @IsOptional()

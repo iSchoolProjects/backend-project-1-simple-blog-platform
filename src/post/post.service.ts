@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { BlogPost } from '../entity/post/post.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PostRepository } from '../repository/post/post.repository';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -12,7 +11,6 @@ import { User } from '../entity/user/user.entity';
 @Injectable()
 export class PostService {
   constructor(
-    @InjectRepository(BlogPost)
     private postRepository: PostRepository,
     private commonService: CommonService,
   ) {}
@@ -20,13 +18,9 @@ export class PostService {
   async readPosts(
     pagination: CreatePaginationDto,
     filter,
+    user: User,
   ): Promise<BlogPost[]> {
-    return await this.postRepository.find({
-      ...filter,
-      take: pagination.limit,
-      skip: pagination.skip,
-      relations: ['user'],
-    });
+    return await this.postRepository.getSomePosts(pagination, filter, user);
   }
 
   async readOnePost(id: string): Promise<BlogPost> {
