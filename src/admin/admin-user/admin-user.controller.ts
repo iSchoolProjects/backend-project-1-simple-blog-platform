@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AdminUserService } from './admin-user.service';
 import { UpdateUserAdminDto } from './dto/update-user.admin.dto';
@@ -6,10 +14,11 @@ import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { AdminGuard } from '../../auth/guards/admin.guard';
 import { User } from '../../entity/user/user.entity';
 import { UpdateResult } from 'typeorm';
+import { SuperAdminGuard } from '../../auth/guards/super-admin.guard';
 
 @ApiTags('Admin')
-@UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('admin/users')
 export class AdminUserController {
   constructor(private readonly adminUserService: AdminUserService) {}
@@ -23,6 +32,7 @@ export class AdminUserController {
     return this.adminUserService.getOneUser(id);
   }
 
+  @UseGuards(SuperAdminGuard)
   @Put(':id')
   editUser(
     @Param('id') id: string,

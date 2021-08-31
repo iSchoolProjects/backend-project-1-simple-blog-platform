@@ -27,10 +27,14 @@ export class AdminUserService {
     }
   }
 
-  editUser(
+  async editUser(
     id: string,
     updateUserAdmin: UpdateUserAdminDto,
   ): Promise<UpdateResult> {
-    return this.userRepository.update(id, updateUserAdmin);
+    try {
+      return await this.userRepository.update(id, updateUserAdmin);
+    } catch (e) {
+      throw new NotFoundException();
+    }
   }
 }
