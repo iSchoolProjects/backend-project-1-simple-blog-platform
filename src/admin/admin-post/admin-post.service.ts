@@ -6,7 +6,7 @@ import { CreatePaginationDto } from '../../common/dto/create-pagination.dto';
 import { CreatePostAdminDto } from './dto/create-post-admin.dto';
 import { CommonService } from '../../common/services/common.service';
 import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
 import { UpdatePostsAdminDto } from './dto/update-posts-admin.dto';
 

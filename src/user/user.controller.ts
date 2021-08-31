@@ -6,13 +6,18 @@ import {
   Param,
   Post,
   Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '../entity/user/user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multerConfig from '../config/multerconfig';
+
 @ApiTags('User')
 @Controller('users')
 export class UserController {
@@ -44,5 +49,23 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UpdateResult> {
     return await this.userService.editUser(id, updateUserDto);
+  }
+
+  @Post('upload')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return this.userService.uploadFile(file);
   }
 }

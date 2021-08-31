@@ -16,7 +16,7 @@ import { User } from '../../entity/user/user.entity';
 import { UpdateResult } from 'typeorm';
 import { SuperAdminGuard } from '../../auth/guards/super-admin.guard';
 
-@ApiTags('Admin')
+@ApiTags('Admin Users')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('admin/users')

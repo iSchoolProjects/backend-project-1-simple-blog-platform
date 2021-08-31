@@ -19,13 +19,13 @@ import { CreateFilterDto } from '../../common/dto/create-filter.dto';
 import { FilterService } from '../../common/services/filter.service';
 import { CreatePostAdminDto } from './dto/create-post-admin.dto';
 import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { AdminGuard } from '../../auth/guards/admin.guard';
 import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
 import { UpdatePostsAdminDto } from './dto/update-posts-admin.dto';
 
-@ApiTags('Admin')
+@ApiTags('Admin Posts')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('admin/posts')
