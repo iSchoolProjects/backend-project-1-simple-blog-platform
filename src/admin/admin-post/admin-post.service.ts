@@ -87,11 +87,15 @@ export class AdminPostService {
   }
 
   async multipleEdits(updatePostsAdminDto: UpdatePostsAdminDto): Promise<void> {
-    for (const id of updatePostsAdminDto.ids) {
-      const post = await this.postRepository.findOneOrFail(id);
-      post.user = updatePostsAdminDto.user;
+    try {
+      for (const id of updatePostsAdminDto.ids) {
+        const post = await this.postRepository.findOneOrFail(id);
+        post.user = updatePostsAdminDto.user;
 
-      await this.postRepository.update(id, post);
+        await this.postRepository.update(id, post);
+      }
+    } catch (e) {
+      throw new NotFoundException();
     }
   }
 
