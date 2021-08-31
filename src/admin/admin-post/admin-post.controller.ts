@@ -23,6 +23,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { AdminGuard } from '../../auth/guards/admin.guard';
 import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
+import { UpdatePostsAdminDto } from './dto/update-posts-admin.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -67,8 +68,8 @@ export class AdminPostController {
   }
 
   @Put('multiple')
-  multipleEdits() {
-    return this.adminPostService.multipleEdits();
+  multipleEdits(@Body() updatePostsAdminDto: UpdatePostsAdminDto) {
+    return this.adminPostService.multipleEdits(updatePostsAdminDto);
   }
 
   @Put(':id')

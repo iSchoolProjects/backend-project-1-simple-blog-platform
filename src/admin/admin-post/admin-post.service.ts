@@ -8,6 +8,7 @@ import { CommonService } from '../../common/services/common.service';
 import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
+import { UpdatePostsAdminDto } from './dto/update-posts-admin.dto';
 
 @Injectable()
 export class AdminPostService {
@@ -85,8 +86,13 @@ export class AdminPostService {
     }
   }
 
-  multipleEdits() {
-    return 'edit edit edit';
+  async multipleEdits(updatePostsAdminDto: UpdatePostsAdminDto) {
+    for (const id of updatePostsAdminDto.ids) {
+      const post = await this.postRepository.findOneOrFail(id);
+      post.user = updatePostsAdminDto.user;
+
+      await this.postRepository.update(id, post);
+    }
   }
 
   async deleteOrUpdate(post: BlogPost): Promise<void> {
