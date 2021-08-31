@@ -52,14 +52,10 @@ export class AdminPostService {
     return await this.postRepository.update(id, post);
   }
 
-  async deletePost(id: string): Promise<DeleteResult | UpdateResult> {
+  async deletePost(id: string): Promise<void> {
     try {
       const post = await this.postRepository.findOneOrFail(id);
-      if (post.isDeleted) {
-        return this.postRepository.delete(id);
-      }
-      post.isDeleted = true;
-      return this.postRepository.update(id, post);
+      await this.deleteOrUpdate(post);
     } catch (e) {
       throw new NotFoundException();
     }
@@ -76,5 +72,28 @@ export class AdminPostService {
       await this.postRepository.save(posts[i]);
     }
     return posts;
+  }
+
+  async multipleDeletion(ids: number[]): Promise<void> {
+    try {
+      for (let i = 0; i < ids.length; i++) {
+        const post = await this.postRepository.findOneOrFail(ids[i]);
+        await this.deleteOrUpdate(post);
+      }
+    } catch (e) {
+      throw new NotFoundException();
+    }
+  }
+
+  multipleEdits() {
+    return 'edit edit edit';
+  }
+
+  async deleteOrUpdate(post: BlogPost): Promise<void> {
+    if (post.isDeleted) {
+      await this.postRepository.delete(post.postId);
+    }
+    post.isDeleted = true;
+    await this.postRepository.update(post.postId, post);
   }
 }
