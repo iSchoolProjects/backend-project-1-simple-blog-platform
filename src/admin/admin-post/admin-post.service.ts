@@ -7,7 +7,7 @@ import { CreatePostAdminDto } from './dto/create-post-admin.dto';
 import { CommonService } from '../../common/services/common.service';
 import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { User } from '../../entity/user/user.entity';
+import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
 
 @Injectable()
 export class AdminPostService {
@@ -63,5 +63,18 @@ export class AdminPostService {
     } catch (e) {
       throw new NotFoundException();
     }
+  }
+
+  async multipleEntries(
+    createPostsAdminDto: CreatePostsAdminDto,
+  ): Promise<BlogPost[]> {
+    const posts = [];
+    for (let i = 0; i < createPostsAdminDto.posts.length; i++) {
+      posts.push(createPostsAdminDto.posts[i]);
+      posts[i] = await this.commonService.slugGenerator(posts[i]);
+
+      await this.postRepository.save(posts[i]);
+    }
+    return posts;
   }
 }

@@ -22,6 +22,7 @@ import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
 import { UpdateResult } from 'typeorm';
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { AdminGuard } from '../../auth/guards/admin.guard';
+import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -74,7 +75,14 @@ export class AdminPostController {
   }
 
   @Delete(':id')
-  deletePost(@Param('id') id: string) {
-    return this.adminPostService.deletePost(id);
+  async deletePost(@Param('id') id: string) {
+    return await this.adminPostService.deletePost(id);
+  }
+
+  @Post('multiple')
+  async multipleEntries(
+    @Body() createPostsAdminDto: CreatePostsAdminDto,
+  ): Promise<BlogPost[]> {
+    return await this.adminPostService.multipleEntries(createPostsAdminDto);
   }
 }
