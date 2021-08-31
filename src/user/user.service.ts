@@ -82,4 +82,14 @@ export class UserService {
       throw new NotFoundException();
     }
   }
+
+  uploadFile(file: Express.Multer.File) {
+    const response = {
+      originalName: file.originalname,
+      fileName: file.filename,
+      size: Math.round(file.size / 1024) + ' KB',
+    };
+
+    return response;
+  }
 }
