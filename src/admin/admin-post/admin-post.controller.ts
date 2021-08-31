@@ -68,7 +68,9 @@ export class AdminPostController {
   }
 
   @Put('multiple')
-  multipleEdits(@Body() updatePostsAdminDto: UpdatePostsAdminDto) {
+  multipleEdits(
+    @Body() updatePostsAdminDto: UpdatePostsAdminDto,
+  ): Promise<void> {
     return this.adminPostService.multipleEdits(updatePostsAdminDto);
   }
 

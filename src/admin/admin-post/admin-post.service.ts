@@ -86,7 +86,7 @@ export class AdminPostService {
     }
   }
 
-  async multipleEdits(updatePostsAdminDto: UpdatePostsAdminDto) {
+  async multipleEdits(updatePostsAdminDto: UpdatePostsAdminDto): Promise<void> {
     for (const id of updatePostsAdminDto.ids) {
       const post = await this.postRepository.findOneOrFail(id);
       post.user = updatePostsAdminDto.user;
