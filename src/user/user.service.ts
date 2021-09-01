@@ -85,10 +85,17 @@ export class UserService {
   }
 
   async uploadFile(file: Express.Multer.File, user: User): Promise<UserPhoto> {
-    if (!file) {
-      throw new NotFoundException();
-    }
     const photo = new UserPhoto({ image: file.filename, user });
     return await this.userPhotoRepository.save(photo);
+  }
+
+  async uploadMultipleFiles(
+    files: Express.Multer.File[],
+    user: User,
+  ): Promise<void> {
+    for (const file of files) {
+      const photo = new UserPhoto({ image: file.filename, user });
+      await this.userPhotoRepository.save(photo);
+    }
   }
 }

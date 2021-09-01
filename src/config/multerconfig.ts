@@ -1,5 +1,6 @@
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { diskStorage } from 'multer';
+import { BadRequestException } from '@nestjs/common';
 
 const multerConfig: MulterOptions = {
   storage: diskStorage({
@@ -28,7 +29,7 @@ const multerConfig: MulterOptions = {
   }),
   fileFilter: (req, file, callback) => {
     if (!file.originalname.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/)) {
-      return callback(null, false);
+      return callback(new BadRequestException(), false);
     }
     callback(null, true);
   },

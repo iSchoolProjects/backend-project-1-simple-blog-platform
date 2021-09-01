@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,7 +17,7 @@ import { User } from '../entity/user/user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import multerConfig from '../config/multerconfig';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GetUser } from '../auth/get-user.decorator';
@@ -76,5 +77,29 @@ export class UserController {
     @GetUser() user: User,
   ): Promise<UserPhoto> {
     return this.userService.uploadFile(file, user);
+  }
+
+  @Post('upload/multiple')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        upload: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  @UseInterceptors(FilesInterceptor('upload', 5, multerConfig))
+  uploadMultipleFiles(
+    @UploadedFiles() files: Express.Multer.File[],
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.userService.uploadMultipleFiles(files, user);
   }
 }
