@@ -5,9 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entity/user/user.entity';
 import { CommonService } from '../common/services/common.service';
 import { BlogPost } from '../entity/post/post.entity';
+import { UserPhoto } from '../entity/user-photo/user-photo.entity';
+import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, BlogPost])],
+  imports: [
+    TypeOrmModule.forFeature([User, UserPhotoRepository, UserPhoto, BlogPost]),
+  ],
   controllers: [UserController],
   providers: [UserService, CommonService],
 })

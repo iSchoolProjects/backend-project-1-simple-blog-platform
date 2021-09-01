@@ -11,6 +11,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { UserPhoto } from '../entity/user-photo/user-photo.entity';
+import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
 
 @Module({
   imports: [
@@ -22,7 +24,13 @@ import { ConfigModule } from '@nestjs/config';
         expiresIn: 3600,
       },
     }),
-    TypeOrmModule.forFeature([User, BlogPost, UserRepository]),
+    TypeOrmModule.forFeature([
+      User,
+      BlogPost,
+      UserRepository,
+      UserPhoto,
+      UserPhotoRepository,
+    ]),
   ],
   providers: [AuthService, UserService, CommonService, JwtStrategy],
   controllers: [AuthController],

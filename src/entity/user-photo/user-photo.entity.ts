@@ -1,6 +1,7 @@
-import { Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from '../user/user.entity';
 
+@Entity()
 export class UserPhoto {
   constructor(partial: Partial<UserPhoto>) {
     Object.assign(this, partial);

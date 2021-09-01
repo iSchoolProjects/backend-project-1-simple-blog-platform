@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -10,16 +9,18 @@ import { User } from '../entity/user/user.entity';
 import { UserRepository } from '../repository/user/user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CommonService } from '../common/services/common.service';
-import { LoginDto } from '../auth/dto/login.dto';
+import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
+import { UserPhoto } from '../entity/user-photo/user-photo.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: UserRepository,
+    @InjectRepository(UserPhoto)
+    private userPhotoRepository: UserPhotoRepository,
     private readonly commonService: CommonService,
   ) {}
 
@@ -83,13 +84,11 @@ export class UserService {
     }
   }
 
-  uploadFile(file: Express.Multer.File) {
-    const response = {
-      originalName: file.originalname,
-      fileName: file.filename,
-      size: Math.round(file.size / 1024) + ' KB',
-    };
-
-    return response;
+  async uploadFile(file: Express.Multer.File, user: User): Promise<UserPhoto> {
+    if (!file) {
+      throw new NotFoundException();
+    }
+    const photo = new UserPhoto({ image: file.filename, user });
+    return await this.userPhotoRepository.save(photo);
   }
 }
