@@ -18,10 +18,10 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import multerConfig from '../config/multerconfig';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GetUser } from '../auth/get-user.decorator';
 import { UserPhoto } from '../entity/user-photo/user-photo.entity';
+import { multerConfig } from '../config/multerconfig';
 
 @ApiTags('User')
 @ApiBearerAuth()

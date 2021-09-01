@@ -1,10 +1,16 @@
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { diskStorage } from 'multer';
 import { BadRequestException } from '@nestjs/common';
+import * as fs from 'fs';
 
-const multerConfig: MulterOptions = {
+export const multerConfig: MulterOptions = {
   storage: diskStorage({
-    destination: './uploads',
+    destination: (req, res, callback) => {
+      if (!fs.existsSync('./uploads/user-photos/' + req.user['id'])) {
+        fs.mkdir('./uploads/user-photos/' + req.user['id'], () => {});
+      }
+      callback(null, './uploads/user-photos/' + req.user['id']);
+    },
     filename: (req, file, callback) => {
       const originalName: string = file.originalname;
       let normalized = originalName.replace(/\s+/g, '-');
@@ -37,4 +43,3 @@ const multerConfig: MulterOptions = {
     fileSize: 1024 * 1024, //Number(process.env.MAX_FILE_SIZE),
   },
 };
-export default multerConfig;
