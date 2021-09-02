@@ -21,7 +21,9 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GetUser } from '../auth/get-user.decorator';
 import { UserPhoto } from '../entity/user-photo/user-photo.entity';
-import { multerConfig } from '../config/multerconfig';
+import setMulterConfig from '../config/multerconfig';
+import { ConfigModule } from '@nestjs/config';
+import { PathUploadEnum } from '../enum/path-upload.enum';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -71,7 +73,9 @@ export class UserController {
       },
     },
   })
-  @UseInterceptors(FileInterceptor('file', multerConfig))
+  @UseInterceptors(
+    FileInterceptor('file', setMulterConfig(PathUploadEnum.USER_PHOTO)),
+  )
   uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @GetUser() user: User,
@@ -85,7 +89,7 @@ export class UserController {
     schema: {
       type: 'object',
       properties: {
-        upload: {
+        file: {
           type: 'array',
           items: {
             type: 'string',
@@ -95,7 +99,13 @@ export class UserController {
       },
     },
   })
-  @UseInterceptors(FilesInterceptor('upload', 5, multerConfig))
+  @UseInterceptors(
+    FilesInterceptor(
+      'file',
+      parseInt(process.env.MAX_NUMBER_OF_FILES),
+      setMulterConfig(PathUploadEnum.USER_PHOTO),
+    ),
+  )
   uploadMultipleFiles(
     @UploadedFiles() files: Express.Multer.File[],
     @GetUser() user: User,
