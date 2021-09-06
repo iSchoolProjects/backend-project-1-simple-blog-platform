@@ -3,6 +3,7 @@ import { diskStorage } from 'multer';
 import { BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
 import { ConfigModule } from '@nestjs/config';
+import { v4 } from 'uuid';
 
 const setMulterConfig = (dest: string): MulterOptions => {
   ConfigModule.forRoot({ isGlobal: true });
@@ -16,23 +17,11 @@ const setMulterConfig = (dest: string): MulterOptions => {
       filename: (req, file, callback) => {
         const originalName = file.originalname;
         const normalized = originalName.replace(/\s+/g, '-');
-        const dateNow = new Date();
-        const datePart =
-          dateNow.getFullYear() +
-          '-' +
-          (dateNow.getMonth() + 1) +
-          '-' +
-          dateNow.getDate();
-
-        const randomPart: string = new Array(10)
-          .fill(0)
-          .map((e) => (Math.random() * 9).toFixed(0).toString())
-          .join('');
 
         const filename = (
-          datePart +
+          getDateNow() +
           '-' +
-          randomPart +
+          v4() +
           '-' +
           normalized
         ).toLowerCase();
@@ -50,5 +39,16 @@ const setMulterConfig = (dest: string): MulterOptions => {
     },
   };
 };
+
+function getDateNow() {
+  const dateNow = new Date();
+  return (
+    dateNow.getFullYear() +
+    '-' +
+    (dateNow.getMonth() + 1) +
+    '-' +
+    dateNow.getDate()
+  );
+}
 
 export default setMulterConfig;

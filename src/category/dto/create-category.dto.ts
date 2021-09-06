@@ -1,7 +1,7 @@
 import { Category } from '../../entity/category/category.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../../entity/user/user.entity';
-import { IsEmpty, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty()

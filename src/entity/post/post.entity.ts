@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { User } from '../user/user.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity()
 export class BlogPost {

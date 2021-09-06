@@ -22,7 +22,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GetUser } from '../auth/get-user.decorator';
 import { UserPhoto } from '../entity/user-photo/user-photo.entity';
 import setMulterConfig from '../config/multerconfig';
-import { ConfigModule } from '@nestjs/config';
 import { PathUploadEnum } from '../enum/path-upload.enum';
 
 @ApiTags('User')
@@ -102,7 +101,7 @@ export class UserController {
   @UseInterceptors(
     FilesInterceptor(
       'file',
-      parseInt(process.env.MAX_NUMBER_OF_FILES),
+      parseInt(process.env.MAX_NUMBER_OF_USER_PHOTOS_FILES),
       setMulterConfig(PathUploadEnum.USER_PHOTO),
     ),
   )
