@@ -22,7 +22,6 @@ import { CreateFilterDto } from '../common/dto/create-filter.dto';
 import { FilterService } from '../common/services/filter.service';
 import { User } from '../entity/user/user.entity';
 import { GetUser } from '../auth/get-user.decorator';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @ApiTags('Post')

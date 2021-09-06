@@ -25,8 +25,6 @@ export class AuthController {
   @Post('test')
   @UseGuards(JwtAuthGuard)
   test(@GetUser() user) {
-    user.toJSON();
-    console.log(user);
     return 'OK';
   }
 }
