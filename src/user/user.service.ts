@@ -108,8 +108,8 @@ export class UserService {
   }
 
   async setProfilePhoto(id: string, user: User): Promise<UpdateResult> {
-    user.profilePhoto = await this.findPhoto(id, user.id);
-    return await this.userRepository.update(user.id, user);
+    const photo = await this.findPhoto(id, user.id);
+    return await this.userRepository.update(user.id, { profilePhoto: photo });
   }
 
   async findPhoto(id: string, userId: number): Promise<UserPhoto> {
