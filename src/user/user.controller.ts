@@ -113,12 +113,12 @@ export class UserController {
     return this.userService.uploadMultipleFiles(files, user);
   }
 
-  @Get('user-photo/:imgID')
+  @Get('user-photo/:imgId')
   seeUploadedPhoto(
-    @Param('imgID') imgID: string,
+    @Param('imgId') imgId: string,
     @GetUser() user: User,
   ): Promise<string> {
-    return this.userService.seeUploadedPhoto(imgID, user);
+    return this.userService.seeUploadedPhoto(imgId, user);
   }
 
   @Post('set-profile-photo/:id')

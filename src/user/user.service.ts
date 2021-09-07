@@ -75,11 +75,9 @@ export class UserService {
 
   async findUserByEmailOrUsername(usernameOrEmail: string): Promise<User> {
     try {
-      const user = await this.userRepository.findOneOrFail({
+      return await this.userRepository.findOneOrFail({
         where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       });
-
-      return user;
     } catch (e) {
       throw new NotFoundException();
     }
@@ -100,25 +98,24 @@ export class UserService {
     }
   }
 
-  async seeUploadedPhoto(img_id: string, user: User): Promise<string> {
+  async seeUploadedPhoto(imgId: string, user: User): Promise<string> {
     try {
-      const user_photo = await this.findPhoto(img_id, user);
-      return `${process.env.APP_HOST}:${process.env.APP_PORT}${PathUploadEnum.SERVE_USER_PHOTO}${user.id}/${user_photo.image}`;
+      const userPhoto: UserPhoto = await this.findPhoto(imgId, user.id);
+      return `${PathUploadEnum.SERVE_USER_PHOTO}${user.id}/${userPhoto.image}`;
     } catch (e) {
       throw new NotFoundException();
     }
   }
 
   async setProfilePhoto(id: string, user: User): Promise<UpdateResult> {
-    const profile_photo = await this.findPhoto(id, user);
-    user.profile_photo = profile_photo;
+    user.profilePhoto = await this.findPhoto(id, user.id);
     return await this.userRepository.update(user.id, user);
   }
 
-  async findPhoto(id: string, user: User) {
+  async findPhoto(id: string, userId: number): Promise<UserPhoto> {
     try {
       return await this.userPhotoRepository.findOneOrFail({
-        where: [{ id: id, user: user.id }],
+        where: [{ id: id, user: userId }],
       });
     } catch (e) {
       throw new NotFoundException();

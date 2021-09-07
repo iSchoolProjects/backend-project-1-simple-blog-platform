@@ -47,5 +47,5 @@ export class User {
 
   @OneToOne(() => UserPhoto)
   @JoinColumn()
-  profile_photo: UserPhoto;
+  profilePhoto: UserPhoto;
 }
