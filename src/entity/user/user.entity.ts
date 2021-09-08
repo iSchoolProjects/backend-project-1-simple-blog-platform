@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '../../enum/user-role.enum';
 import { BlogPost } from '../post/post.entity';
+import { UserPhoto } from '../user-photo/user-photo.entity';
 
 @Entity()
 export class User {
@@ -37,9 +45,7 @@ export class User {
   @OneToMany(() => BlogPost, (blogPost) => blogPost.user)
   posts: BlogPost;
 
-  // toJSON() {
-  //   delete this.password;
-  //   delete this.salt;
-  //   return this;
-  // }
+  @OneToOne(() => UserPhoto)
+  @JoinColumn()
+  profilePhoto: UserPhoto;
 }

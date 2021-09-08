@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CommonService } from '../common/services/common.service';
 import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
 import { UserPhoto } from '../entity/user-photo/user-photo.entity';
+import { PathUploadEnum } from '../enum/path-upload.enum';
 
 @Injectable()
 export class UserService {
@@ -74,11 +75,9 @@ export class UserService {
 
   async findUserByEmailOrUsername(usernameOrEmail: string): Promise<User> {
     try {
-      const user = await this.userRepository.findOneOrFail({
+      return await this.userRepository.findOneOrFail({
         where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       });
-
-      return user;
     } catch (e) {
       throw new NotFoundException();
     }
@@ -96,6 +95,30 @@ export class UserService {
     for (const file of files) {
       const photo = new UserPhoto({ image: file.filename, user });
       await this.userPhotoRepository.save(photo);
+    }
+  }
+
+  async seeUploadedPhoto(imgId: string, user: User): Promise<string> {
+    try {
+      const userPhoto: UserPhoto = await this.findPhoto(imgId, user.id);
+      return `${PathUploadEnum.SERVE_USER_PHOTO}${user.id}/${userPhoto.image}`;
+    } catch (e) {
+      throw new NotFoundException();
+    }
+  }
+
+  async setProfilePhoto(id: string, user: User): Promise<UpdateResult> {
+    const photo = await this.findPhoto(id, user.id);
+    return await this.userRepository.update(user.id, { profilePhoto: photo });
+  }
+
+  async findPhoto(id: string, userId: number): Promise<UserPhoto> {
+    try {
+      return await this.userPhotoRepository.findOneOrFail({
+        where: [{ id: id, user: userId }],
+      });
+    } catch (e) {
+      throw new NotFoundException();
     }
   }
 }

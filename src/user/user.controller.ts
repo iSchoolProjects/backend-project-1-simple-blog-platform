@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Res,
   UploadedFile,
   UploadedFiles,
   UseGuards,
@@ -110,5 +111,21 @@ export class UserController {
     @GetUser() user: User,
   ): Promise<void> {
     return this.userService.uploadMultipleFiles(files, user);
+  }
+
+  @Get('user-photo/:imgId')
+  seeUploadedPhoto(
+    @Param('imgId') imgId: string,
+    @GetUser() user: User,
+  ): Promise<string> {
+    return this.userService.seeUploadedPhoto(imgId, user);
+  }
+
+  @Post('set-profile-photo/:id')
+  setProfilePhoto(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<UpdateResult> {
+    return this.userService.setProfilePhoto(id, user);
   }
 }

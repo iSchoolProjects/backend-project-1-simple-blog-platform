@@ -8,10 +8,15 @@ import typeOrmConfig from './config/typeormconfig';
 import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
 import { AdminUserModule } from './admin/admin-user/admin-user.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+    }),
     TypeOrmModule.forRoot(typeOrmConfig),
     UserModule,
     CategoryModule,
