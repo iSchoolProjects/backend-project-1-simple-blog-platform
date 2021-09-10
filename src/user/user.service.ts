@@ -54,8 +54,8 @@ export class UserService {
       user = await this.commonService.hashUserPassword(user);
 
       return await this.userRepository.save(user);
-    } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
         //duplicate username or email
         throw new ConflictException('Username or email already exists');
       } else {
