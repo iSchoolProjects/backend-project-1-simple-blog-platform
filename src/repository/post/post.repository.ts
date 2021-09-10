@@ -29,7 +29,6 @@ export class PostRepository extends Repository<BlogPost> {
           .orWhere('blog_post.user IS NULL');
       }),
     );
-    console.log(filter.title);
 
     const posts = post.take(pagination.limit).skip(pagination.skip).getMany();
 
