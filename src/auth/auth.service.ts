@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
@@ -15,6 +14,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { MailService } from '../mail/mail.service';
 import { UpdateResult } from 'typeorm';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ExceptionService } from '../common/services/exception.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +22,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private readonly mailService: MailService,
+    private readonly exceptionService: ExceptionService,
   ) {}
   async signUp(createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.addUser(createUserDto);
@@ -32,19 +33,13 @@ export class AuthService {
       loginDto.usernameOrEmail,
     );
     try {
-      if (
-        user &&
-        (await bcrypt.hash(loginDto.password, user.salt)) === user.password
-      ) {
-        const payload: JwtPayloadInterface = { username: user.username };
-        const token: string = this.jwtService.sign(payload);
+      await this.checkPassword(user, loginDto);
+      const payload: JwtPayloadInterface = { username: user.username };
+      const token: string = this.jwtService.sign(payload);
 
-        return { token };
-      } else {
-        throw new UnauthorizedException();
-      }
+      return { token };
     } catch (e) {
-      throw new UnauthorizedException();
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -76,16 +71,31 @@ export class AuthService {
     try {
       const user = await this.userService.findOne(id);
       const checkUser = await this.jwtService.decode(token);
-      if (checkUser['username'] !== user.username) throw new Error();
+
+      await this.checkIfUserExist(checkUser, user);
 
       const currentTimestamp = Math.round(Date.now() / 1000);
       const expiresAt = checkUser['exp'];
 
-      if (currentTimestamp > expiresAt) throw new Error();
+      await this.checkIfJwtTokenExpired(currentTimestamp, expiresAt);
 
       return this.userService.changeForgottenPassword(resetPasswordDto, user);
     } catch (e) {
-      throw new BadRequestException();
+      this.exceptionService.handleError(e);
     }
+  }
+
+  async checkPassword(user: User, loginDto: LoginDto) {
+    if ((await bcrypt.hash(loginDto.password, user.salt)) !== user.password) {
+      throw new NotFoundException();
+    }
+  }
+
+  checkIfJwtTokenExpired(currentTimestamp, expiresAt) {
+    if (currentTimestamp > expiresAt) throw new BadRequestException();
+  }
+
+  checkIfUserExist(checkUser, user) {
+    if (checkUser['username'] !== user.username) throw new NotFoundException();
   }
 }

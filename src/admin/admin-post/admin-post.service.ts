@@ -9,6 +9,7 @@ import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
 import { UpdateResult } from 'typeorm';
 import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
 import { UpdatePostsAdminDto } from './dto/update-posts-admin.dto';
+import { ExceptionService } from '../../common/services/exception.service';
 
 @Injectable()
 export class AdminPostService {
@@ -16,6 +17,7 @@ export class AdminPostService {
     @InjectRepository(BlogPost)
     private readonly postRepository: PostRepository,
     private readonly commonService: CommonService,
+    private readonly exceptionService: ExceptionService,
   ) {}
   async getAllPosts(
     pagination: CreatePaginationDto,
@@ -35,7 +37,7 @@ export class AdminPostService {
         relations: ['user'],
       });
     } catch (e) {
-      throw new NotFoundException();
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -58,7 +60,7 @@ export class AdminPostService {
       const post = await this.postRepository.findOneOrFail(id);
       await this.deleteOrUpdate(post);
     } catch (e) {
-      throw new NotFoundException();
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -82,7 +84,7 @@ export class AdminPostService {
         await this.deleteOrUpdate(post);
       }
     } catch (e) {
-      throw new NotFoundException();
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -95,7 +97,7 @@ export class AdminPostService {
         await this.postRepository.update(id, post);
       }
     } catch (e) {
-      throw new NotFoundException();
+      this.exceptionService.handleError(e);
     }
   }
 

@@ -14,6 +14,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserPhoto } from '../entity/user-photo/user-photo.entity';
 import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
 import { MailModule } from '../mail/mail.module';
+import { ExceptionService } from '../common/services/exception.service';
 
 @Module({
   imports: [
@@ -34,7 +35,13 @@ import { MailModule } from '../mail/mail.module';
     ]),
     MailModule,
   ],
-  providers: [AuthService, UserService, CommonService, JwtStrategy],
+  providers: [
+    AuthService,
+    UserService,
+    CommonService,
+    JwtStrategy,
+    ExceptionService,
+  ],
   controllers: [AuthController],
   exports: [JwtStrategy, PassportModule],
 })
