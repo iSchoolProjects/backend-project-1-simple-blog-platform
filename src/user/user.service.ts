@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -14,6 +15,8 @@ import { CommonService } from '../common/services/common.service';
 import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
 import { UserPhoto } from '../entity/user-photo/user-photo.entity';
 import { PathUploadEnum } from '../enum/path-upload.enum';
+import { MailService } from '../mail/mail.service';
+import { ResetPasswordDto } from '../auth/dto/reset-password.dto';
 
 @Injectable()
 export class UserService {
@@ -23,6 +26,7 @@ export class UserService {
     @InjectRepository(UserPhoto)
     private userPhotoRepository: UserPhotoRepository,
     private readonly commonService: CommonService,
+    private readonly mailService: MailService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -46,10 +50,12 @@ export class UserService {
       if (existingUserCheck.length) throw new ConflictException();
       let user = new User(createUserDto);
 
+      await this.mailService.sendWelcomeMail(user);
       user = await this.commonService.hashUserPassword(user);
+
       return await this.userRepository.save(user);
-    } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
         //duplicate username or email
         throw new ConflictException('Username or email already exists');
       } else {
@@ -119,6 +125,26 @@ export class UserService {
       });
     } catch (e) {
       throw new NotFoundException();
+    }
+  }
+
+  async changeForgottenPassword(
+    resetPasswordDto: ResetPasswordDto,
+    user: User,
+  ): Promise<UpdateResult> {
+    try {
+      user.password = resetPasswordDto.password;
+      const userWithHashedPassword = await this.commonService.hashUserPassword(
+        user,
+      );
+      return this.userRepository.update(user.id, {
+        password: userWithHashedPassword.password,
+        salt: userWithHashedPassword.salt,
+        passwordChangeCounter: user.passwordChangeCounter + 1,
+        passwordLastChangeAt: new Date(),
+      });
+    } catch (e) {
+      throw new BadRequestException();
     }
   }
 }

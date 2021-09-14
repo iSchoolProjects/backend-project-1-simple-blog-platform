@@ -10,6 +10,7 @@ import { AdminModule } from './admin/admin.module';
 import { AdminUserModule } from './admin/admin-user/admin-user.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { join } from 'path';
     AuthModule,
     AdminModule,
     AdminUserModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],

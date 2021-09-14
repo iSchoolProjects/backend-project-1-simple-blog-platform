@@ -1,11 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { User } from '../entity/user/user.entity';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
-import { GetUser } from './get-user.decorator';
-import { JwtAuthGuard } from './guards/jwt.guard';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { UpdateResult } from 'typeorm';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -21,10 +22,18 @@ export class AuthController {
     return await this.authService.singIn(loginDto);
   }
 
-  @ApiBearerAuth()
-  @Post('test')
-  @UseGuards(JwtAuthGuard)
-  test(@GetUser() user) {
-    return 'OK';
+  @Post('forgot-password')
+  forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto): Promise<void> {
+    return this.authService.forgotPassword(forgotPasswordDto);
+  }
+
+  @Post('forgot-password/:id/:token')
+  resetPassword(
+    @Param('id') userId: string,
+    @Param('token') token: string,
+    @Body()
+    resetPasswordDto: ResetPasswordDto,
+  ): Promise<UpdateResult> {
+    return this.authService.resetPassword(userId, token, resetPasswordDto);
   }
 }

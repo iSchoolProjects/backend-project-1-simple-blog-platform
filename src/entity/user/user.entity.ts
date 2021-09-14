@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToMany,
@@ -31,6 +32,14 @@ export class User {
   @Column({ name: 'password_hash', type: 'varchar', length: '128' })
   @Exclude()
   password: string;
+
+  @Column({ default: null })
+  @Exclude()
+  passwordLastChangeAt: Date;
+
+  @Column({ default: 0 })
+  @Exclude()
+  passwordChangeCounter: number;
 
   @Column()
   @Exclude()

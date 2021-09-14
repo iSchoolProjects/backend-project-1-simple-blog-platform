@@ -13,6 +13,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { UserPhoto } from '../entity/user-photo/user-photo.entity';
 import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UserPhotoRepository } from '../repository/user-photo/user-photo.reposit
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: parseInt(process.env.JWT_TOKEN_LOGIN_EXPIRES),
       },
     }),
     TypeOrmModule.forFeature([
@@ -31,6 +32,7 @@ import { UserPhotoRepository } from '../repository/user-photo/user-photo.reposit
       UserPhoto,
       UserPhotoRepository,
     ]),
+    MailModule,
   ],
   providers: [AuthService, UserService, CommonService, JwtStrategy],
   controllers: [AuthController],
