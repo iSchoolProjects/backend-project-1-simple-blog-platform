@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { BlogPost } from '../entity/post/post.entity';
 import { PostRepository } from '../repository/post/post.repository';
@@ -25,10 +25,10 @@ export class PostService {
     return await this.postRepository.getSomePosts(pagination, filter, user);
   }
 
-  async readOnePost(id: string): Promise<BlogPost> {
+  async readOnePost(id: string, user: User): Promise<BlogPost> {
     try {
-      return await this.postRepository.findOneOrFail(id, {
-        relations: ['category', 'user'],
+      return await this.postRepository.findOneOrFail({
+        where: { postId: id, user },
       });
     } catch (e) {
       this.exceptionService.handleError(e);
@@ -48,9 +48,15 @@ export class PostService {
     }
   }
 
-  async deletePost(id: string): Promise<DeleteResult | UpdateResult> {
+  async deletePost(
+    id: string,
+    user: User,
+  ): Promise<DeleteResult | UpdateResult> {
     try {
-      const post = await this.postRepository.findOneOrFail(id);
+      const post = await this.postRepository.findOneOrFail({
+        where: { postId: id, user },
+      });
+
       if (post.isDeleted) {
         return await this.postRepository.delete(id);
       }
@@ -64,9 +70,17 @@ export class PostService {
   async editPost(
     id: string,
     updatePostDto: UpdatePostDto,
+    user: User,
   ): Promise<UpdateResult> {
-    let post = new BlogPost(updatePostDto);
-    post = await this.commonService.slugGenerator(post);
-    return await this.postRepository.update(id, post);
+    try {
+      let post = await this.postRepository.findOneOrFail({
+        where: { postId: id, user },
+      });
+      post = { ...post, ...updatePostDto };
+      post = await this.commonService.slugGenerator(post);
+      return await this.postRepository.update(id, post);
+    } catch (e) {
+      this.exceptionService.handleError(e);
+    }
   }
 }

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
@@ -34,6 +35,7 @@ export class AuthService {
     );
     try {
       await this.checkPassword(user, loginDto);
+      await this.checkIfUserDisabled(user);
       const payload: JwtPayloadInterface = { username: user.username };
       const token: string = this.jwtService.sign(payload);
 
@@ -97,5 +99,12 @@ export class AuthService {
 
   checkIfUserExist(checkUser, user) {
     if (checkUser['username'] !== user.username) throw new NotFoundException();
+  }
+
+  checkIfUserDisabled(user: User) {
+    if (!user.isEnabled)
+      throw new UnauthorizedException(
+        'You are banned! Please contact support!',
+      );
   }
 }

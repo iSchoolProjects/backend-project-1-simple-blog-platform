@@ -16,7 +16,6 @@ export class FilterService {
     for (const key in filter) {
       if (filter[key] || filter[key] === null) filters[key] = filter[key];
     }
-
     return filters;
   }
 }

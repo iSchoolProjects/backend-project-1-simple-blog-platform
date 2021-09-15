@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Category } from '../category/category.entity';
 import { User } from '../user/user.entity';
+import { PostStatusEnum } from '../../enum/post-status.enum';
 
 @Entity()
 export class BlogPost {
@@ -40,4 +41,7 @@ export class BlogPost {
 
   @ManyToOne(() => User, (user) => user.posts)
   user: User;
+
+  @Column({ default: PostStatusEnum.PENDING })
+  postStatus: PostStatusEnum;
 }

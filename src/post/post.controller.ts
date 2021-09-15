@@ -23,8 +23,11 @@ import { FilterService } from '../common/services/filter.service';
 import { User } from '../entity/user/user.entity';
 import { GetUser } from '../auth/get-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
 
 @ApiTags('Post')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('posts')
 export class PostController {
   constructor(
@@ -33,9 +36,7 @@ export class PostController {
     private readonly filterService: FilterService,
   ) {}
 
-  @ApiBearerAuth()
   @Get()
-  @UseGuards(JwtAuthGuard)
   async readPosts(
     @Query() createPagination: CreatePaginationDto,
     @Query() setFilter: CreateFilterDto,
@@ -53,13 +54,14 @@ export class PostController {
   }
 
   @Get(':id')
-  async readOne(@Param('id') id: string): Promise<BlogPost> {
-    return await this.postService.readOnePost(id);
+  async readOne(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<BlogPost> {
+    return await this.postService.readOnePost(id, user);
   }
 
-  @ApiBearerAuth()
   @Post()
-  @UseGuards(JwtAuthGuard)
   async writePost(
     @Body() postDto: CreatePostDto,
     @GetUser() user: User,
@@ -70,15 +72,17 @@ export class PostController {
   @Delete(':id')
   async deletePost(
     @Param('id') id: string,
+    @GetUser() user: User,
   ): Promise<DeleteResult | UpdateResult> {
-    return await this.postService.deletePost(id);
+    return await this.postService.deletePost(id, user);
   }
 
   @Put(':id')
   async editPost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
+    @GetUser() user: User,
   ): Promise<UpdateResult> {
-    return await this.postService.editPost(id, updatePostDto);
+    return await this.postService.editPost(id, updatePostDto, user);
   }
 }
