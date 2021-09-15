@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsPositive } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -18,6 +18,7 @@ export class CreatePaginationDto {
   @IsNumber()
   @Type(() => Number)
   @ApiProperty({ required: false })
+  @Min(0)
   page: number;
 
   @IsOptional()

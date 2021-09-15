@@ -7,12 +7,14 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { CommonService } from '../common/services/common.service';
 import { CreatePaginationDto } from '../common/dto/create-pagination.dto';
 import { User } from '../entity/user/user.entity';
+import { ExceptionService } from '../common/services/exception.service';
 
 @Injectable()
 export class PostService {
   constructor(
     private postRepository: PostRepository,
     private commonService: CommonService,
+    private exceptionService: ExceptionService,
   ) {}
 
   async readPosts(
@@ -29,7 +31,7 @@ export class PostService {
         relations: ['category', 'user'],
       });
     } catch (e) {
-      return e.message;
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -42,7 +44,7 @@ export class PostService {
 
       return await this.postRepository.save(post);
     } catch (e) {
-      return e.message;
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -55,7 +57,7 @@ export class PostService {
       post.isDeleted = true;
       return await this.postRepository.update(id, post);
     } catch (e) {
-      return e.message();
+      this.exceptionService.handleError(e);
     }
   }
 

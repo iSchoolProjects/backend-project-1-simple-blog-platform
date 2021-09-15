@@ -1,8 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreatePaginationDto } from '../dto/create-pagination.dto';
+import { ExceptionService } from './exception.service';
 
 @Injectable()
 export class PaginationService {
+  constructor(private readonly exceptionService: ExceptionService) {}
   setPagination(pagination: CreatePaginationDto): CreatePaginationDto {
     try {
       if (!pagination.page || pagination.page === 0)
@@ -13,7 +15,7 @@ export class PaginationService {
 
       return pagination;
     } catch (e) {
-      throw new BadRequestException();
+      this.exceptionService.handleError(e);
     }
   }
 }

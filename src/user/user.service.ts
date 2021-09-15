@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user/user.entity';
 import { UserRepository } from '../repository/user/user.repository';
@@ -17,6 +11,7 @@ import { UserPhoto } from '../entity/user-photo/user-photo.entity';
 import { PathUploadEnum } from '../enum/path-upload.enum';
 import { MailService } from '../mail/mail.service';
 import { ResetPasswordDto } from '../auth/dto/reset-password.dto';
+import { ExceptionService } from '../common/services/exception.service';
 
 @Injectable()
 export class UserService {
@@ -27,6 +22,7 @@ export class UserService {
     private userPhotoRepository: UserPhotoRepository,
     private readonly commonService: CommonService,
     private readonly mailService: MailService,
+    private readonly exceptionService: ExceptionService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -37,30 +33,21 @@ export class UserService {
     try {
       return await this.userRepository.findOneOrFail(id);
     } catch (e) {
-      return e.message;
+      this.exceptionService.handleError(e);
     }
   }
 
   async addUser(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const existingUserCheck = await this.userRepository.find({
-        username: createUserDto.username,
-      });
-
-      if (existingUserCheck.length) throw new ConflictException();
       let user = new User(createUserDto);
 
-      await this.mailService.sendWelcomeMail(user);
       user = await this.commonService.hashUserPassword(user);
 
-      return await this.userRepository.save(user);
+      user = await this.userRepository.save(user);
+      await this.mailService.sendWelcomeMail(user);
+      return user;
     } catch (e) {
-      if (e.code === 'ER_DUP_ENTRY') {
-        //duplicate username or email
-        throw new ConflictException('Username or email already exists');
-      } else {
-        throw new InternalServerErrorException();
-      }
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -85,7 +72,7 @@ export class UserService {
         where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       });
     } catch (e) {
-      throw new NotFoundException();
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -109,7 +96,7 @@ export class UserService {
       const userPhoto: UserPhoto = await this.findPhoto(imgId, user.id);
       return `${PathUploadEnum.SERVE_USER_PHOTO}${user.id}/${userPhoto.image}`;
     } catch (e) {
-      throw new NotFoundException();
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -124,7 +111,7 @@ export class UserService {
         where: [{ id: id, user: userId }],
       });
     } catch (e) {
-      throw new NotFoundException();
+      this.exceptionService.handleError(e);
     }
   }
 

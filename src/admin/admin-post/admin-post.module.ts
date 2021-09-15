@@ -6,6 +6,7 @@ import { BlogPost } from '../../entity/post/post.entity';
 import { PaginationService } from '../../common/services/pagination.service';
 import { FilterService } from '../../common/services/filter.service';
 import { CommonService } from '../../common/services/common.service';
+import { ExceptionService } from '../../common/services/exception.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BlogPost])],
@@ -15,6 +16,7 @@ import { CommonService } from '../../common/services/common.service';
     PaginationService,
     FilterService,
     CommonService,
+    ExceptionService,
   ],
 })
 export class AdminPostModule {}

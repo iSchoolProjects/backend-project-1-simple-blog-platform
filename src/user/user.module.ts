@@ -9,6 +9,7 @@ import { UserPhoto } from '../entity/user-photo/user-photo.entity';
 import { UserPhotoRepository } from '../repository/user-photo/user-photo.repository';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from '../mail/mail.module';
+import { ExceptionService } from '../common/services/exception.service';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { MailModule } from '../mail/mail.module';
     MailModule,
   ],
   controllers: [UserController],
-  providers: [UserService, CommonService],
+  providers: [UserService, CommonService, ExceptionService],
 })
 export class UserModule {}

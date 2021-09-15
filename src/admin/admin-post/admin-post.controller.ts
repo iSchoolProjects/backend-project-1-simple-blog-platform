@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -49,22 +48,14 @@ export class AdminPostController {
 
   @Get(':id')
   getOnePost(@Param('id') id: string): Promise<BlogPost> {
-    try {
-      return this.adminPostService.getOnePost(id);
-    } catch (e) {
-      throw new NotFoundException();
-    }
+    return this.adminPostService.getOnePost(id);
   }
 
   @Post()
   async createPost(
     @Body() createPostDto: CreatePostAdminDto,
   ): Promise<BlogPost> {
-    try {
-      return await this.adminPostService.createPost(createPostDto);
-    } catch (e) {
-      throw new NotFoundException();
-    }
+    return await this.adminPostService.createPost(createPostDto);
   }
 
   @Put('multiple')

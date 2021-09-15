@@ -8,10 +8,17 @@ import { PaginationService } from '../common/services/pagination.service';
 import { FilterService } from '../common/services/filter.service';
 import { AuthModule } from '../auth/auth.module';
 import { PostRepository } from '../repository/post/post.repository';
+import { ExceptionService } from '../common/services/exception.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PostRepository, BlogPost]), AuthModule],
   controllers: [PostController],
-  providers: [PostService, CommonService, PaginationService, FilterService],
+  providers: [
+    PostService,
+    CommonService,
+    PaginationService,
+    FilterService,
+    ExceptionService,
+  ],
 })
 export class PostModule {}

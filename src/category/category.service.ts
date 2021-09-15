@@ -5,12 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryRepository } from '../repository/category/category.repository';
 import { DeleteResult } from 'typeorm';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ExceptionService } from '../common/services/exception.service';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: CategoryRepository,
+    private exceptionService: ExceptionService,
   ) {}
   async readCategories(): Promise<Category[]> {
     return await this.categoryRepository.find();
@@ -20,7 +22,7 @@ export class CategoryService {
     try {
       return await this.categoryRepository.findOneOrFail(id);
     } catch (e) {
-      return e.message;
+      this.exceptionService.handleError(e);
     }
   }
 
@@ -30,23 +32,19 @@ export class CategoryService {
 
       return await this.categoryRepository.save(category);
     } catch (e) {
-      return e.message;
+      this.exceptionService.handleError(e);
     }
   }
 
   async deleteCategory(id: string): Promise<DeleteResult> {
-    try {
-      return await this.categoryRepository.delete(id);
-    } catch (e) {
-      return e.message;
-    }
+    return await this.categoryRepository.delete(id);
   }
 
   async editCategory(id: string, updateCategoryDto: UpdateCategoryDto) {
     try {
       return await this.categoryRepository.update(id, updateCategoryDto);
     } catch (e) {
-      return e.message;
+      this.exceptionService.handleError(e);
     }
   }
 }
