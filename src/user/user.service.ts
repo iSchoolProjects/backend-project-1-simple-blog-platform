@@ -69,7 +69,10 @@ export class UserService {
   async findUserByEmailOrUsername(usernameOrEmail: string): Promise<User> {
     try {
       return await this.userRepository.findOneOrFail({
-        where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+        where: [
+          { username: usernameOrEmail, isEnabled: true },
+          { email: usernameOrEmail, isEnabled: true },
+        ],
       });
     } catch (e) {
       this.exceptionService.handleError(e);

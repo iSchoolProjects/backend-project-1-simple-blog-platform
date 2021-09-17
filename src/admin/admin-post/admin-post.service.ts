@@ -21,12 +21,12 @@ export class AdminPostService {
     private readonly exceptionService: ExceptionService,
   ) {}
   async getAllPosts(
-    pagination: CreatePaginationDto,
+    { limit, skip }: CreatePaginationDto,
     filter,
   ): Promise<BlogPost[]> {
     return await this.postRepository.find({
-      take: pagination.limit,
-      skip: pagination.skip,
+      take: limit,
+      skip: skip,
       where: { ...filter },
       relations: ['user'],
     });
@@ -114,21 +114,25 @@ export class AdminPostService {
     await this.postRepository.update(post.postId, post);
   }
 
-  async getPostsWithStatusPending(
-    pagination: CreatePaginationDto,
-  ): Promise<BlogPost[]> {
+  async getPostsWithStatusPending({
+    limit,
+    skip,
+  }: CreatePaginationDto): Promise<BlogPost[]> {
     return await this.postRepository.find({
-      take: pagination.limit,
-      skip: pagination.skip,
+      take: limit,
+      skip: skip,
       where: { postStatus: PostStatusEnum.PENDING },
       relations: ['user'],
     });
   }
 
-  async getReportedPosts(pagination: CreatePaginationDto): Promise<BlogPost[]> {
+  async getReportedPosts({
+    limit,
+    skip,
+  }: CreatePaginationDto): Promise<BlogPost[]> {
     return await this.postRepository.find({
-      take: pagination.limit,
-      skip: pagination.skip,
+      take: limit,
+      skip: skip,
       where: { postStatus: PostStatusEnum.REPORTED },
       relations: ['user'],
     });

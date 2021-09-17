@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { BlogPost } from '../entity/post/post.entity';
 import { PostRepository } from '../repository/post/post.repository';

@@ -34,8 +34,9 @@ export class AuthService {
       loginDto.usernameOrEmail,
     );
     try {
+      //await this.checkIfUserDisabled(user);
       await this.checkPassword(user, loginDto);
-      await this.checkIfUserDisabled(user);
+
       const payload: JwtPayloadInterface = { username: user.username };
       const token: string = this.jwtService.sign(payload);
 
@@ -101,10 +102,10 @@ export class AuthService {
     if (checkUser['username'] !== user.username) throw new NotFoundException();
   }
 
-  checkIfUserDisabled(user: User) {
-    if (!user.isEnabled)
-      throw new UnauthorizedException(
-        'You are banned! Please contact support!',
-      );
-  }
+  // checkIfUserDisabled(user: User) {
+  //   if (!user.isEnabled)
+  //     throw new UnauthorizedException(
+  //       'You are banned! Please contact support!',
+  //     );
+  // }
 }
