@@ -18,11 +18,13 @@ import { CreateFilterDto } from '../../common/dto/create-filter.dto';
 import { FilterService } from '../../common/services/filter.service';
 import { CreatePostAdminDto } from './dto/create-post-admin.dto';
 import { UpdatePostAdminDto } from './dto/update-post-admin.dto';
-import { UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { AdminGuard } from '../../auth/guards/admin.guard';
 import { CreatePostsAdminDto } from './dto/create-posts-admin.dto';
 import { UpdatePostsAdminDto } from './dto/update-posts-admin.dto';
+import { GetUser } from '../../auth/get-user.decorator';
+import { User } from '../../entity/user/user.entity';
 
 @ApiTags('Admin Posts')
 @ApiBearerAuth()
@@ -44,6 +46,24 @@ export class AdminPostController {
       this.paginationService.setPagination(createPaginationDto);
     const filter = this.filterService.setFilter(setFilterDto);
     return await this.adminPostService.getAllPosts(pagination, filter);
+  }
+
+  @Get('pending-posts')
+  async getPostsWithStatusPending(
+    @Query() createPaginationDto: CreatePaginationDto,
+  ): Promise<BlogPost[]> {
+    const pagination =
+      this.paginationService.setPagination(createPaginationDto);
+    return this.adminPostService.getPostsWithStatusPending(pagination);
+  }
+
+  @Get('reported-posts')
+  getReportedPosts(
+    @Query() createPaginationDto: CreatePaginationDto,
+  ): Promise<BlogPost[]> {
+    const pagination =
+      this.paginationService.setPagination(createPaginationDto);
+    return this.adminPostService.getReportedPosts(pagination);
   }
 
   @Get(':id')
@@ -69,7 +89,7 @@ export class AdminPostController {
   async editPost(
     @Param('id') id: string,
     @Body() updatePostAdminDto: UpdatePostAdminDto,
-  ): Promise<UpdateResult> {
+  ): Promise<UpdateResult | DeleteResult> {
     return await this.adminPostService.editPost(id, updatePostAdminDto);
   }
 

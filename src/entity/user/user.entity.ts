@@ -57,4 +57,8 @@ export class User {
   @OneToOne(() => UserPhoto)
   @JoinColumn()
   profilePhoto: UserPhoto;
+
+  @Column({ default: true })
+  @Exclude()
+  isEnabled: boolean;
 }
